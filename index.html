@@ -164,6 +164,17 @@
 
             map.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
 
+            // Mapbox Sky API
+            map.addLayer({
+                'id': 'sky',
+                'type': 'sky',
+                'paint': {
+                    'sky-type': 'atmosphere',
+                    'sky-atmosphere-sun': [0.0, 0.0],
+                    'sky-atmosphere-sun-intensity': 15
+                }
+            });
+
             // 陰影起伏図
             map.addSource("hillshade", {
                 type: 'raster',
