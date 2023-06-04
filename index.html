@@ -1,0 +1,214 @@
+<html>
+
+<head>
+    <title>浸水想定図（PNGタイル）</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+    <script src='https://unpkg.com/maplibre-gl@3.0.1/dist/maplibre-gl.js'></script>
+    <link href='https://unpkg.com/maplibre-gl@3.0.1/dist/maplibre-gl.css' rel='stylesheet' />
+    -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        /*
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: 'https://tile2.openstreetmap.jp/styles/osm-bright/style.json',
+            zoom: 14,
+            minZoom: 1,
+            maxZoom: 23,
+            center: [130.7393, 32.2118],
+            hash: true,
+            attributionControl: false
+        });
+        */
+
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2hpd29ya3MiLCJhIjoiY2szeHZjeXJsMDJzdDNsbXczdnN1b3hpNiJ9.VQg_5pGbF1qU_6FZ33Uf4g';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'https://tile2.openstreetmap.jp/styles/osm-bright/style.json',
+            zoom: 14.5,
+            minZoom: 1,
+            maxZoom: 23,
+            pitch: 75,
+            bearing: 130,
+            center: [130.72109, 32.21422],
+            hash: true,
+            attributionControl: false
+        });
+
+        /*
+        // ズーム・回転
+        map.addControl(new maplibregl.NavigationControl());
+
+        // フルスクリーンモードのオンオフ
+        map.addControl(new maplibregl.FullscreenControl());
+
+        // 現在位置表示
+        map.addControl(new maplibregl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: false
+            },
+            fitBoundsOptions: { maxZoom: 18 },
+            trackUserLocation: true,
+            showUserLocation: true
+        }));
+
+        // スケール表示
+        map.addControl(new maplibregl.ScaleControl({
+            maxWidth: 200,
+            unit: 'metric'
+        }));
+
+        // Attributionを折りたたみ表示
+        map.addControl(new maplibregl.AttributionControl({
+            compact: true,
+            customAttribution: '（<a href="https://twitter.com/syanseto" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/hazard-map" target="_blank">Github</a>） '
+        }));
+        */
+
+        // ズーム・回転
+        map.addControl(new mapboxgl.NavigationControl());
+
+        // フルスクリーンモードのオンオフ
+        map.addControl(new mapboxgl.FullscreenControl());
+
+        // 現在位置表示
+        map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: false
+            },
+            fitBoundsOptions: { maxZoom: 18 },
+            trackUserLocation: true,
+            showUserLocation: true
+        }));
+
+        // スケール表示
+        map.addControl(new mapboxgl.ScaleControl({
+            maxWidth: 200,
+            unit: 'metric'
+        }));
+
+        // Attributionを折りたたみ表示
+        map.addControl(new mapboxgl.AttributionControl({
+            compact: true,
+            customAttribution: '（<a href="https://twitter.com/syanseto" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/hazard-map" target="_blank">Github</a>） '
+        }));
+
+        /*
+        // 3D地形コントロール
+        map.addControl(
+            new maplibregl.TerrainControl({
+                source: 'gsidem',
+                exaggeration: 1 // 標高を強調する倍率
+            })
+        );
+        */
+        /*
+        map.addControl(
+            new maplibregl.TerrainControl({
+                source: 'terrain',
+                exaggeration: 1 // 標高を強調する倍率
+            })
+        );
+        */
+
+        map.on('load', () => {
+
+            /*
+            // 標高タイル
+            // 【参考】https://jsbin.com/pahajugohi/edit?html,output
+            map.addSource("gsidem", {
+                type: 'raster-dem',
+                tiles: [
+                    'gsidem://https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png',
+                ],
+                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#dem" target="_blank">地理院タイル</a>',
+                tileSize: 256
+            });
+
+            map.setTerrain({ 'source': 'gsidem', 'exaggeration': 1.0 });
+            */
+
+            /*
+            // MapTiler 3D terrain
+            map.addSource("terrain", {
+                "type": "raster-dem",
+                "url": "https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=3vP7xaDm3gASNdwulEW1",
+            });
+
+            map.setTerrain({ source: "terrain", exaggeration: 1 });
+            */
+
+            // Mapbox 3D terrain dem
+            map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512
+            });
+
+            map.setTerrain({ source: "mapbox-dem", exaggeration: 1 });
+
+            // 陰影起伏図
+            map.addSource("hillshade", {
+                type: 'raster',
+                tiles: [
+                    'https://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png',
+                ],
+                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#hillshademap" target="_blank">地理院タイル(陰影起伏図)</a>',
+                tileSize: 256
+            });
+
+            map.addLayer({
+                id: 'hillshade-tiles',
+                type: 'raster',
+                source: 'hillshade',
+                minzoom: 2,
+                maxzoom: 18,
+                paint: {
+                    'raster-opacity': 0.5
+                }
+            });
+
+            // 令和2年7月豪雨 浸水推定図 球磨川水系球磨川 人吉市周辺（2020年7月4日13時作成）
+            map.addSource("flood", {
+                type: "raster",
+                tiles: ["https://cyberjapandata.gsi.go.jp/xyz/20200703oame_kumagawahitoyoshi_0704dansaizu/{z}/{x}/{y}.png"],
+                tileSize: 256,
+                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html#t20200703oame_kumagawahitoyoshi_0704dansaizu" target="_blank">地理院タイル(令和2年7月豪雨 浸水推定図 球磨川水系球磨川 人吉市周辺（2020年7月4日13時作成）)</a>'
+            });
+
+            map.addLayer({
+                id: "flood_tiles",
+                type: "raster",
+                source: "flood",
+                minzoom: 2,
+                maxzoom: 18,
+                paint: {
+                    'raster-opacity': 1.0
+                },
+                layout: {
+                    'visibility': 'visible'
+                }
+            });
+
+        })
+    </script>
+</body>
+
+</html>
